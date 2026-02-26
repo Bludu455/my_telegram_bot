@@ -103,6 +103,13 @@ except Exception as e:
     logger.error(f"❌ Ошибка создания бота: {e}")
     exit(1)
 
+# Сбрасываем вебхуки при запуске (чтобы избежать конфликтов)
+try:
+    bot.delete_webhook()
+    logger.info("✅ Вебхуки сброшены")
+except Exception as e:
+    logger.warning(f"⚠️ Не удалось сбросить вебхуки: {e}")
+
 user_states = {}
 
 # ========== КОНФИГУРАЦИЯ APEXDLC ==========
@@ -3191,4 +3198,11 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         logger.info("👋 Бот остановлен пользователем")
     except Exception as e:
-        logger.error(f"❌ Ошибка при работе бота: {e}")
+        # Обработка ошибки 409 (конфликт с другим экземпляром бота)
+        if "409" in str(e):
+            logger.error("❌ Ошибка 409: Конфликт с другим экземпляром бота!")
+            logger.error("👉 Убедись, что бот не запущен в другом месте (на ПК, в другом сервисе)")
+            logger.error("👉 Перезапусти бота через Manual Deploy на Render")
+            logger.error("👉 Если ошибка повторяется, подожди 1-2 минуты и перезапусти")
+        else:
+            logger.error(f"❌ Ошибка при работе бота: {e}")
