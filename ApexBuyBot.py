@@ -3143,4 +3143,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         logger.info("👋 Бот остановлен пользователем")
     except Exception as e:
+
         logger.error(f"❌ Ошибка при работе бота: {e}")
