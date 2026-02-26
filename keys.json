@@ -1,0 +1,17 @@
+{
+  "15d3429ec5ebba1ce27269f03a2c78a4b0416ba38901dcbee8aa49c52dea1a97": {
+    "key": "AP9SU-JTXED-HS3DT-6UPBK",
+    "plan_id": "lifetime",
+    "generated_at": "2026-02-22T19:24:44.629980",
+    "generated_by": "7816073349",
+    "generated_for": "7816073349",
+    "is_free": true,
+    "is_purchased": false,
+    "key_type": "free",
+    "status": "activated",
+    "activated_by": "7816073349",
+    "activated_at": "2026-02-22T19:24:50.655950",
+    "expires_at": "2126-01-29T19:24:50.655933",
+    "format": "5-5-5-5"
+  }
+}
