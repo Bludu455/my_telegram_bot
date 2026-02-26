@@ -31,20 +31,38 @@ ADMINS_FILE = 'admins.json'
 CLIENT_LINKS_FILE = 'client_links.json'
 PROMOCODES_FILE = 'promocodes.json'
 
-# Функция для получения токена
+# ========== ПОЛУЧЕНИЕ ТОКЕНА ==========
 def get_token():
-    token = os.getenv('TELEGRAM_BOT_TOKEN')
+    """
+    Получение токена из переменной окружения BOT_TOKEN
+    Это исправленная версия, которая работает на Render
+    """
+    # Пробуем получить из переменной окружения (приоритетно для Render)
+    token = os.getenv('BOT_TOKEN')
     if token:
+        logger.info("✅ Токен получен из переменной окружения BOT_TOKEN")
         return token.strip()
     
+    # Если нет в окружении, пробуем из файла (для локальной разработки)
     try:
         with open('token.txt', 'r') as f:
             token = f.read().strip()
             if token:
+                logger.info("✅ Токен получен из файла token.txt")
                 return token
     except FileNotFoundError:
         pass
     
+    # Если токен не найден - выводим ошибку и завершаем работу
+    logger.error("❌ Токен не найден! Установите переменную окружения BOT_TOKEN")
+    logger.error("   На Render: добавьте BOT_TOKEN в Environment Variables")
+    logger.error("   Локально: создайте файл token.txt с токеном")
+    
+    # На Render не пытаемся запрашивать ввод с клавиатуры - это вызовет ошибку
+    if os.getenv('RENDER'):  # Если мы на Render
+        raise Exception("BOT_TOKEN не задан в переменных окружения на Render")
+    
+    # Для локальной разработки - запрашиваем ввод
     print("=" * 50)
     print("ВВЕДИТЕ ТОКЕН TELEGRAM BOT")
     print("=" * 50)
@@ -3143,5 +3161,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         logger.info("👋 Бот остановлен пользователем")
     except Exception as e:
-
         logger.error(f"❌ Ошибка при работе бота: {e}")
