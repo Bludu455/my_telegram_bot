@@ -12,6 +12,8 @@ import random
 import string
 import hashlib
 import re
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 logging.basicConfig(
     level=logging.INFO,
@@ -3113,6 +3115,34 @@ def handle_text(message):
         bot.reply_to(message, reply_text, parse_mode='HTML', reply_markup=markup)
         return
 
+# ========== СЕРВЕР ЗДОРОВЬЯ ДЛЯ RENDER ==========
+# Этот сервер нужен, чтобы Render не ругался на отсутствие открытых портов
+
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(b"Bot is running! ApexDLC Telegram Bot")
+    
+    def log_message(self, format, *args):
+        # Отключаем логирование запросов, чтобы не засорять консоль
+        pass
+
+def run_health_server():
+    try:
+        server = HTTPServer(('0.0.0.0', 10000), HealthCheckHandler)
+        logger.info("✅ Сервер здоровья запущен на порту 10000")
+        server.serve_forever()
+    except Exception as e:
+        logger.error(f"❌ Ошибка запуска сервера здоровья: {e}")
+
+# Запускаем сервер здоровья в отдельном потоке
+health_thread = threading.Thread(target=run_health_server, daemon=True)
+health_thread.start()
+logger.info("✅ Сервер здоровья запущен в фоновом режиме")
+
+# ========== ЗАПУСК БОТА ==========
 if __name__ == '__main__':
     logger.info("=" * 50)
     logger.info("✨ Бот ApexDLC с исправленными обработчиками запущен... ✨")
